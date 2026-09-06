@@ -1,19 +1,16 @@
-from typing import TYPE_CHECKING
-from interface.menu import Menu
+from servicos.mesa_service import MesaService
+from servicos.produto_service import ProdutoService
+from servicos.atendimento_service import AtendimentoService
 from interface.menus.menu_mesas import MenuMesas
 from interface.menus.menu_produtos import MenuProdutos
 from interface.menus.menu_atendimentos import MenuAtendimentos
 
-if TYPE_CHECKING:
-    from lanchonete import Lanchonete
 
-
-class MenuPrincipal(Menu):
-    def __init__(self, lanchonete: "Lanchonete") -> None:
-        super().__init__(lanchonete)
-        self.__menu_mesas = MenuMesas(lanchonete)
-        self.__menu_produtos = MenuProdutos(lanchonete)
-        self.__menu_atendimentos = MenuAtendimentos(lanchonete)
+class MenuPrincipal:
+    def __init__(self, mesa_service: MesaService, produto_service: ProdutoService, atendimento_service: AtendimentoService) -> None:
+        self.__menu_mesas = MenuMesas(mesa_service)
+        self.__menu_produtos = MenuProdutos(produto_service)
+        self.__menu_atendimentos = MenuAtendimentos(atendimento_service)
 
     def executar(self) -> None:
         opcao: str = ""
@@ -39,3 +36,4 @@ class MenuPrincipal(Menu):
                 print("\nEncerrando a aplicação...")
             else:
                 print("\nOpção inválida! Tente novamente.")
+                

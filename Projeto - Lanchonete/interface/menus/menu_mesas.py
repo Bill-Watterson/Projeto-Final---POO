@@ -1,22 +1,17 @@
-from typing import TYPE_CHECKING
-from interface.menu import Menu
+from servicos.mesa_service import MesaService
 from interface.telas.tela_mesas import TelaMesas
 
-if TYPE_CHECKING:
-    from lanchonete import Lanchonete
 
-
-class MenuMesas(Menu):
-    def __init__(self, lanchonete: "Lanchonete") -> None:
-        super().__init__(lanchonete)
-        self.__tela = TelaMesas(lanchonete)
+class MenuMesas:
+    def __init__(self, mesa_service: MesaService) -> None:
+        self.__tela = TelaMesas(mesa_service)
 
     def executar(self) -> None:
         opcao: str = ""
         while opcao != "0":
             print("\n--- MENU DE MESAS ---")
-            print("1 - Cadastrar Mesa")
-            print("2 - Listar Mesas")
+            print("1 - Cadastrar mesa")
+            print("2 - Listar mesas")
             print("0 - Voltar")
 
             opcao = input("Escolha uma opção: ").strip()
@@ -29,3 +24,4 @@ class MenuMesas(Menu):
                 pass
             else:
                 print("\nOpção inválida! Tente novamente.")
+                
