@@ -1,49 +1,66 @@
-from typing import TYPE_CHECKING
-from interface.tela import Tela
+from servicos.produto_service import ProdutoService
 from excecoes.lanchonete_error import LanchoneteError
 
-if TYPE_CHECKING:
-    from lanchonete import Lanchonete
 
+class TelaProdutos:
+    """Tela responsável pela interação com o usuário para gestão do cardápio."""
 
-class TelaProdutos(Tela):
-    def cadastrar_produto(self) -> None:
-        print("\n--- CADASTRO DE PRODUTO ---")
-        print("1 - Suco")
-        print("2 - Sanduíche")
-        print("3 - Salada de Frutas")
-        tipo: str = input("Escolha o tipo: ").strip()
+    def __init__(self, produto_service: ProdutoService) -> None:
+        self.__service: ProdutoService = produto_service
 
+    def cadastrar_suco(self) -> None:
+        print("\n--- CADASTRAR SUCO ---")
+        try:
+            codigo: int = int(input("Código: "))
+            nome: str = input("Nome do suco: ").strip()
+            preco: float = float(input("Preço (R$): ").replace(",", "."))
+            tamanho: str = input("Tamanho (Ex: 300ml, 500ml): ").strip()
+            
+            self.__service.cadastrar_suco(codigo, nome, preco, tamanho)
+            print("\n[✓] Suco cadastrado com sucesso!")
+        except ValueError:
+            print("\n[!] Valores inválidos inseridos.")
+        except LanchoneteError as e:
+            print(f"\n[!] Erro de Negócio: {e}")
+
+    def cadastrar_sanduiche(self) -> None:
+        print("\n--- CADASTRAR SANDUÍCHE ---")
+        try:
+            codigo: int = int(input("Código: "))
+            nome: str = input("Nome do sanduíche: ").strip()
+            preco: float = float(input("Preço (R$): ").replace(",", "."))
+            pao: str = input("Tipo de Pão: ").strip()
+            
+            self.__service.cadastrar_sanduiche(codigo, nome, preco, pao)
+            print("\n[✓] Sanduíche cadastrado com sucesso!")
+        except ValueError:
+            print("\n[!] Valores inválidos inseridos.")
+        except LanchoneteError as e:
+            print(f"\n[!] Erro de Negócio: {e}")
+
+    def cadastrar_salada_frutas(self) -> None:
+        print("\n--- CADASTRAR SALADA DE FRUTAS ---")
         try:
             codigo: int = int(input("Código: "))
             nome: str = input("Nome: ").strip()
             preco: float = float(input("Preço (R$): ").replace(",", "."))
-
-            if tipo == "1":
-                tamanho: str = input("Tamanho (ex: 300ml): ").strip()
-                self._lanchonete.cadastrar_suco(codigo, nome, preco, tamanho)
-            elif tipo == "2":
-                pao: str = input("Tipo de pão: ").strip()
-                self._lanchonete.cadastrar_sanduiche(codigo, nome, preco, pao)
-            elif tipo == "3":
-                adicional: str = input("Adicional: ").strip()
-                self._lanchonete.cadastrar_salada_frutas(codigo, nome, preco, adicional)
-            else:
-                print("\n[!] Tipo inválido.")
-                return
-
-            print(f"\n[✓] Produto '{nome}' cadastrado com sucesso!")
+            adicional: str = input("Adicional (Ex: Leite condensado, Granola): ").strip()
+            
+            self.__service.cadastrar_salada_frutas(codigo, nome, preco, adicional)
+            print("\n[✓] Salada de frutas cadastrada com sucesso!")
         except ValueError:
-            print("\n[!] Erro: Código e preço devem ser valores numéricos.")
+            print("\n[!] Valores inválidos inseridos.")
         except LanchoneteError as e:
-            print(f"\n[!] Erro: {e}")
+            print(f"\n[!] Erro de Negócio: {e}")
 
     def listar_produtos(self) -> None:
-        print("\n--- CARDÁPIO DE PRODUTOS ---")
-        produtos = self._lanchonete.listar_produtos()
+        print("\n--- CARDÁPIO ---")
+        produtos = self.__service.listar_produtos()
+        
         if not produtos:
             print("Nenhum produto cadastrado.")
             return
 
         for prod in produtos:
-            print(f"Cód: {prod.codigo} | {prod.descricao_detalhada()} | R$ {prod.preco:.2f}")
+            print(prod.descricao_detalhada())
+            
